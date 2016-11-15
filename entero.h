@@ -1,8 +1,10 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct integer {
   /* Arreglo con los digitos del numero */
-  char **digits;
+  int8_t *digits;
 
   /* Cantidad de digitos del numero */
   size_t digits_count;
@@ -11,7 +13,7 @@ struct integer {
 typedef struct integer Integer;
 
 /* Crea un integer a partir de una cadena de string */
-Integer *new_integer(char **number_string);
+Integer *new_integer(char *number_string);
 
 /* Entrega la suma de ambos enteros */
 Integer *add(Integer *a, Integer *b);
@@ -31,3 +33,9 @@ Integer *power(Integer *base, Integer *exponent);
 
 /* Entrega el maximo comun divisor (MCD) entre a y b */
 Integer *gcd(Integer *a, Integer *b);
+
+/* Imprime el arreglo de digitos */
+void print_integer(Integer *a);
+
+/* Libera la memoria usada por el entero a */
+void free_integer(Integer *a);

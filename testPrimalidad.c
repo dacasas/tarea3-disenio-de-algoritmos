@@ -1,5 +1,4 @@
 #include "entero.h"
-#include <stdio.h>
 
 int main(int argc, char **argv) {
   if (argc == 2) {
@@ -12,12 +11,19 @@ int main(int argc, char **argv) {
       exit(0);
     }
 
-    char *first_number = argv[1];
-    char *second_number = argv[2];
+    Integer **a = (Integer **)malloc(sizeof(Integer) * (argc - 1));
 
-    printf("%i\n", first_number[0]);
-    printf("%i\n", first_number[1]);
-    printf("%s\n", second_number);
+    for (int i = 1; i < argc; i++) {
+      a[i - 1] = new_integer(argv[i]);
+    }
+
+    for (int i = 1; i < argc; i++) {
+      print_integer(a[i - 1]);
+      printf("%s\n", "");
+      free_integer(a[i - 1]);
+    }
+
+    free(a);
   }
 
   /* code */
