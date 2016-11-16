@@ -89,3 +89,25 @@ void free_integer(Integer *a) {
   }
   free(a);
 }
+
+char is_power(Integer *a) {}
+
+char has_square_root(Integer *n, Integer *k, Integer *i, Integer *j) {}
+
+Integer *exp(Integer *n, Integer *k) {}
+
+long random_at_most(long max) {
+  unsigned long
+      // max <= RAND_MAX < ULONG_MAX, so this is okay.
+      num_bins = (unsigned long)max + 1,
+      num_rand = (unsigned long)RAND_MAX + 1, bin_size = num_rand / num_bins,
+      defect = num_rand % num_bins;
+
+  long x;
+  do {
+    x = random();
+  } while (num_rand - defect <= (unsigned long)x);
+
+  // Truncated division is intentional
+  return x / bin_size;
+}

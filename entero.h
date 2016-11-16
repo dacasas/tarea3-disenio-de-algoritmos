@@ -29,7 +29,16 @@ Integer *module(Integer *number, Integer *base);
 Integer *division_whole(Integer *numerator, Integer *divider, Integer **rest);
 
 /* Entrega el resultado de base^exponent */
-Integer *power(Integer *base, Integer *exponent);
+Integer *exp(Integer *base, Integer *exponent);
+
+/* Entrega el resultado de base^exponent mod n */
+Integer *exp(Integer *base, Integer *exponent, Integer *n);
+
+/* Entrega 1 si son iguales, 0 en el caso contrario */
+char equals(Integer *a, Integer *b);
+
+/* Entrega 1 si es igual a 0, 0 en otro caso*/
+char equalsToZero(Integer *a);
 
 /* Entrega el maximo comun divisor (MCD) entre a y b */
 Integer *gcd(Integer *a, Integer *b);
@@ -39,3 +48,12 @@ void print_integer(Integer *a);
 
 /* Libera la memoria usada por el entero a */
 void free_integer(Integer *a);
+
+/* Entrega 1 si a es potencia de otro numero, 0 en caso contrario */
+char is_power(Integer *a);
+
+/* Entrega 1 si a tiene raiz entera, 0 en caso contrario */
+char has_square_root(Integer *n, Integer *k, Integer *i, Integer *j);
+
+/* Retorna un numero aleatorio en el intervalo [0, max] */
+long random_at_most(long max);
