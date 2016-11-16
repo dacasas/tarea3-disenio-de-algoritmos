@@ -17,14 +17,11 @@ int main(int argc, char **argv) {
       a[i - 1] = new_integer(argv[i]);
     }
 
-    for (int i = 1; i < argc; i++) {
-      print_integer(a[i - 1]);
-      printf("%s\n", "");
-      free_integer(a[i - 1]);
-    }
-
     Integer *result = add(a[0], a[1]);
     print_integer(result);
+
+    free_integer(a[0]);
+    free_integer(a[1]);
 
     free_integer(result);
 

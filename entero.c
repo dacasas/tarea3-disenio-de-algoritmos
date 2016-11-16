@@ -16,32 +16,36 @@ Integer *new_integer(char *number_string) {
   return i;
 }
 
+Integer *remove_first_pos(Integer *a) {
+  Integer *n = (Integer *)malloc(sizeof(Integer));
+  n->digits_count = a->digits_count - 1;
+  n->digits = (int8_t *)malloc(sizeof(int8_t) * n->digits_count);
+  for (size_t m = 1; m < a->digits_count; m++) {
+    n->digits[m - 1] = a->digits[m];
+  }
+  free_integer(a);
+  return n;
+}
+
 Integer *add(Integer *a, Integer *b) {
-  printf("%s\n", "<break 0>");
   Integer *i = (Integer *)malloc(sizeof(Integer));
   if (a->digits_count > b->digits_count) {
     i->digits_count = a->digits_count + 1;
   } else {
-    printf("%zd, %zd\n", a->digits_count, b->digits_count);
-    i->digits_count = b->digits_count;
-    printf("%zd, %zd\n", a->digits_count, b->digits_count);
+    i->digits_count = b->digits_count + 1;
   }
-  printf("%s\n", "<break 1>");
 
   i->digits = (int8_t *)malloc(sizeof(int8_t) * i->digits_count);
   for (size_t index = 0; index < i->digits_count; index++) {
     i->digits[index] = 0;
   }
-  printf("%s\n", "<break 2>");
 
   int64_t count_a = a->digits_count - 1;
   int64_t count_b = b->digits_count - 1;
   int64_t count_result = i->digits_count - 1;
   int8_t charge = 0;
-  printf("%s\n", "<break 3>");
   while (count_a >= 0 && count_b >= 0) {
     int8_t result = a->digits[count_a] + b->digits[count_b] + charge;
-    printf("%s\n", "<break 4-l>");
     if (result < 10) {
       i->digits[count_result] = result;
       charge = 0;
@@ -52,8 +56,8 @@ Integer *add(Integer *a, Integer *b) {
 
     count_a--;
     count_b--;
+    count_result--;
   }
-  printf("%s\n", "<break 5>");
 
   while (count_a >= 0) {
     int8_t result = a->digits[count_a] + charge;
@@ -67,7 +71,6 @@ Integer *add(Integer *a, Integer *b) {
 
     count_a--;
   }
-  printf("%s\n", "<break 6>");
 
   while (count_b >= 0) {
     int8_t result = b->digits[count_b] + charge;
@@ -82,14 +85,20 @@ Integer *add(Integer *a, Integer *b) {
     count_b--;
   }
 
-  printf("%s\n", "<break 7>");
-
   if (charge == 1) {
     i->digits[0] = 1;
   } else {
-    i->digits_count--;
-    i->digits = (int8_t *)realloc(i->digits, i->digits_count * sizeof(int8_t));
+    Integer *n = remove_first_pos(i);
+    i = n;
   }
+
+  printf("%s", "Adding ");
+  print_integer(a);
+  printf("%s", " + ");
+  print_integer(b);
+  printf("%s", " = ");
+  print_integer(i);
+  printf("%s\n", "");
 
   return i;
 }
