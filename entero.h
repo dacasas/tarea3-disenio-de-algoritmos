@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,13 +33,16 @@ Integer *division_whole(Integer *numerator, Integer *divider, Integer **rest);
 Integer *exp(Integer *base, Integer *exponent);
 
 /* Entrega el resultado de base^exponent mod n */
-Integer *exp(Integer *base, Integer *exponent, Integer *n);
+Integer *exp_mod(Integer *base, Integer *exponent, Integer *n);
 
 /* Entrega 1 si son iguales, 0 en el caso contrario */
 char equals(Integer *a, Integer *b);
 
 /* Entrega 1 si es igual a 0, 0 en otro caso*/
 char equalsToZero(Integer *a);
+
+/* Entrega 1 si a = b, 0 en otro caso */
+char equalsToDigit(Integer *a, int8_t b);
 
 /* Entrega el maximo comun divisor (MCD) entre a y b */
 Integer *gcd(Integer *a, Integer *b);
@@ -54,6 +58,8 @@ char is_power(Integer *a);
 
 /* Entrega 1 si a tiene raiz entera, 0 en caso contrario */
 char has_square_root(Integer *n, Integer *k, Integer *i, Integer *j);
+
+char is_even(Integer *a);
 
 /* Retorna un numero aleatorio en el intervalo [0, max] */
 long random_at_most(long max);

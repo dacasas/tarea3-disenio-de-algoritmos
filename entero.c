@@ -17,8 +17,80 @@ Integer *new_integer(char *number_string) {
 }
 
 Integer *add(Integer *a, Integer *b) {
+  printf("%s\n", "<break 0>");
   Integer *i = (Integer *)malloc(sizeof(Integer));
-  // TODO Implements addition methos for Integer struct
+  if (a->digits_count > b->digits_count) {
+    i->digits_count = a->digits_count + 1;
+  } else {
+    printf("%zd, %zd\n", a->digits_count, b->digits_count);
+    i->digits_count = b->digits_count;
+    printf("%zd, %zd\n", a->digits_count, b->digits_count);
+  }
+  printf("%s\n", "<break 1>");
+
+  i->digits = (int8_t *)malloc(sizeof(int8_t) * i->digits_count);
+  for (size_t index = 0; index < i->digits_count; index++) {
+    i->digits[index] = 0;
+  }
+  printf("%s\n", "<break 2>");
+
+  int64_t count_a = a->digits_count - 1;
+  int64_t count_b = b->digits_count - 1;
+  int64_t count_result = i->digits_count - 1;
+  int8_t charge = 0;
+  printf("%s\n", "<break 3>");
+  while (count_a >= 0 && count_b >= 0) {
+    int8_t result = a->digits[count_a] + b->digits[count_b] + charge;
+    printf("%s\n", "<break 4-l>");
+    if (result < 10) {
+      i->digits[count_result] = result;
+      charge = 0;
+    } else {
+      i->digits[count_result] = result - 10;
+      charge = 1;
+    }
+
+    count_a--;
+    count_b--;
+  }
+  printf("%s\n", "<break 5>");
+
+  while (count_a >= 0) {
+    int8_t result = a->digits[count_a] + charge;
+    if (result < 10) {
+      i->digits[count_result] = result;
+      charge = 0;
+    } else {
+      i->digits[count_result] = result - 10;
+      charge = 1;
+    }
+
+    count_a--;
+  }
+  printf("%s\n", "<break 6>");
+
+  while (count_b >= 0) {
+    int8_t result = b->digits[count_b] + charge;
+    if (result < 10) {
+      i->digits[count_result] = result;
+      charge = 0;
+    } else {
+      i->digits[count_result] = result - 10;
+      charge = 1;
+    }
+
+    count_b--;
+  }
+
+  printf("%s\n", "<break 7>");
+
+  if (charge == 1) {
+    i->digits[0] = 1;
+  } else {
+    i->digits_count--;
+    i->digits = (int8_t *)realloc(i->digits, i->digits_count * sizeof(int8_t));
+  }
+
   return i;
 }
 
@@ -40,12 +112,6 @@ Integer *division_whole(Integer *numerator, Integer *divider, Integer **rest) {
   return i;
 }
 
-Integer *power(Integer *base, Integer *exponent) {
-  Integer *i = (Integer *)malloc(sizeof(Integer));
-  // TODO Implements powers
-  return i;
-}
-
 char equals(Integer *a, Integer *b) {
   if (a->digits_count != b->digits_count) {
     return 0;
@@ -61,6 +127,10 @@ char equals(Integer *a, Integer *b) {
 
 char equalsToZero(Integer *a) {
   return (a->digits_count == 1 && a->digits[0] == 0);
+}
+
+char equalsToDigit(Integer *a, int8_t digit) {
+  return (a->digits_count == 1 && a->digits[0] == digit);
 }
 
 Integer *gcd(Integer *a, Integer *b) {
@@ -95,6 +165,8 @@ char is_power(Integer *a) {}
 char has_square_root(Integer *n, Integer *k, Integer *i, Integer *j) {}
 
 Integer *exp(Integer *n, Integer *k) {}
+
+char is_even(Integer *a) {}
 
 long random_at_most(long max) {
   unsigned long

@@ -23,6 +23,11 @@ int main(int argc, char **argv) {
       free_integer(a[i - 1]);
     }
 
+    Integer *result = add(a[0], a[1]);
+    print_integer(result);
+
+    free_integer(result);
+
     free(a);
   }
 
