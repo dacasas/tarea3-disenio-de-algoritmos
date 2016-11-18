@@ -17,7 +17,7 @@ struct integer {
 typedef struct integer Integer;
 
 /* Crea un integer a partir de una cadena de string */
-Integer *new_integer(char *number_string, int8_t sign);
+Integer *new_integer(char *number_string);
 
 /* Convierte un int8_t en Integer */
 Integer *get_integer(int8_t a);
@@ -69,3 +69,6 @@ char is_even(Integer *a);
 
 /* Retorna un numero aleatorio en el intervalo [0, max] */
 long random_at_most(long max);
+
+/* Returns the index of the greatest argument */
+char is_greater(Integer *a, Integer *b);

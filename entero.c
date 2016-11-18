@@ -1,6 +1,6 @@
 #include "entero.h"
 
-Integer *new_integer(char *number_string, int8_t sign) {
+Integer *new_integer(char *number_string) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
 
   const char *s;
@@ -8,36 +8,130 @@ Integer *new_integer(char *number_string, int8_t sign) {
   }
   i->digits_count = (s - number_string);
 
-  i->digits = (int8_t *)malloc((i->digits_count) * sizeof(int8_t));
-
-  for (size_t pos = 0; pos < i->digits_count; pos++) {
-    i->digits[pos] = number_string[pos] - 48;
+  // If first character is "-" (45 ASCII) remove it
+  if (number_string[0] == 45) {
+    i->sign = -1;
+    i->digits_count--;
+  } else {
+    i->sign = 1;
   }
 
-  i->sign = sign;
+  i->digits = (int8_t *)malloc((i->digits_count) * sizeof(int8_t));
+
+  if (number_string[0] == 45) {
+    for (size_t pos = 0; pos < i->digits_count; pos++) {
+      i->digits[pos] = number_string[pos + 1] - 48;
+    }
+  } else {
+    for (size_t pos = 0; pos < i->digits_count; pos++) {
+      i->digits[pos] = number_string[pos] - 48;
+    }
+  }
+
   return i;
 }
 
-Integer *remove_first_pos(Integer *a) {
-  Integer *n = (Integer *)malloc(sizeof(Integer));
-  n->digits_count = a->digits_count - 1;
-  n->digits = (int8_t *)malloc(sizeof(int8_t) * n->digits_count);
-  for (size_t m = 1; m < a->digits_count; m++) {
-    n->digits[m - 1] = a->digits[m];
+char equals(Integer *a, Integer *b) {
+  if (a->digits_count != b->digits_count) {
+    return 0;
+
+  } else {
+
+    for (size_t i = 0; i < a->digits_count; i++) {
+      if (a->digits[i] != b->digits[i]) {
+        return 0;
+      }
+    }
+
+    return 1;
   }
+}
+
+char equalsToDigit(Integer *a, int8_t digit) {
+  return (a->digits_count == 1 && a->digits[0] == digit);
+}
+
+Integer *remove_pos(Integer *a, size_t k) {
+  if (k == 0) {
+    return a;
+  }
+
+  Integer *n = (Integer *)malloc(sizeof(Integer));
+  n->digits_count = a->digits_count - k;
+  n->digits = (int8_t *)malloc(sizeof(int8_t) * n->digits_count);
+
+  for (size_t m = k; m < a->digits_count; m++) {
+    n->digits[m - k] = a->digits[m];
+  }
+
   free_integer(a);
   return n;
 }
 
-/* Transform "a" to Integer type */
-Integer *get_integer(int8_t a) {
-  char m = a;
-  if (a < 0) {
-    return new_integer(&m, -1);
+Integer *clean_zeroes(Integer *a) {
+  if (a->digits[0] != 0 || equalsToDigit(a, 0)) {
+    return a;
+
   } else {
-    return new_integer(&m, 1);
+    size_t count = 0;
+    int8_t zero = a->digits[count];
+
+    while (zero == 0 && a->digits_count > 1) {
+      count++;
+      zero = a->digits[count];
+    }
+
+    return remove_pos(a, count);
   }
 }
+
+char is_greater(Integer *a, Integer *b) {
+  if (a->digits_count > b->digits_count) {
+
+    if (a->sign == 1) {
+      return 1;
+    } else {
+      return 0;
+    }
+
+  } else if (a->digits_count < b->digits_count) {
+
+    if (b->sign == 1) {
+      return 0;
+    } else {
+      return 1;
+    }
+
+  } else {
+
+    size_t count = 0;
+
+    while (count < a->digits_count) {
+      if (a->digits[count] > b->digits[count]) {
+
+        if (a->sign == 1) {
+          return 1;
+        } else {
+          return 0;
+        }
+
+      } else if (a->digits[count] < b->digits[count]) {
+
+        if (b->sign == 1) {
+          return 0;
+        } else {
+          return 1;
+        }
+      }
+
+      count++;
+    }
+    return 0;
+  }
+}
+
+/* Transform "a" to Integer type */
+Integer *get_integer(int8_t a) {}
 
 Integer *add(Integer *a, Integer *b) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
@@ -100,7 +194,7 @@ Integer *add(Integer *a, Integer *b) {
   if (charge == 1) {
     i->digits[0] = 1;
   } else {
-    Integer *n = remove_first_pos(i);
+    Integer *n = remove_pos(i, 1);
     i = n;
   }
 
@@ -115,9 +209,66 @@ Integer *add(Integer *a, Integer *b) {
   return i;
 }
 
+Integer *substract(Integer *a, Integer *b) {
+  if (greater(a, b)) {
+    Integer *result = substract(b, a);
+    result->sign = -1;
+    return result;
+  }
+
+  Integer *i = (Integer *)malloc(sizeof(Integer));
+  if (a->digits_count > b->digits_count) {
+    i->digits_count = a->digits_count;
+  } else {
+    i->digits_count = b->digits_count;
+  }
+
+  i->digits = (int8_t *)malloc(sizeof(int8_t) * i->digits_count);
+  for (size_t index = 0; index < i->digits_count; index++) {
+    i->digits[index] = 0;
+  }
+
+  int64_t count_a = a->digits_count - 1;
+  int64_t count_b = b->digits_count - 1;
+  int64_t count_result = i->digits_count - 1;
+  int8_t charge = 0;
+  while (count_a >= 0 && count_b >= 0) {
+    int8_t result = a->digits[count_a] + b->digits[count_b] + charge;
+    if (result < 10) {
+      i->digits[count_result] = result;
+      charge = 0;
+    } else {
+      i->digits[count_result] = result - 10;
+      charge = 1;
+    }
+
+    count_a--;
+    count_b--;
+    count_result--;
+  }
+}
+
 Integer *mupltiply(Integer *a, Integer *b) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
-
+  if (a->digits_count == 1 || b->digits_count == 1) {
+    if (a->digits_count == 1) {
+      // For each number in b, multiply by a
+      return b;
+    } else {
+      // For each number in a multiply by b
+      return a;
+    }
+  } else if (a->digits_count == 0 || b->digits_count == 0) {
+    if (a->digits_count == 0) {
+      // For each number in b, multiply by a
+      return a;
+    } else {
+      // For each number in a multiply by b
+      return b;
+    }
+  } else {
+    // asdfasef
+  }
   return i;
 }
 
@@ -130,29 +281,11 @@ Integer *module(Integer *number, Integer *base) {
 Integer *division_whole(Integer *numerator, Integer *divider, Integer *rest) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
   rest = (Integer *)malloc(sizeof(Integer));
+  while (numerator >= divider) {
+    numerator = numerator - divider;
+  }
 
   return i;
-}
-
-char equals(Integer *a, Integer *b) {
-  if (a->digits_count != b->digits_count) {
-    return 0;
-  } else {
-    for (size_t i = 0; i < a->digits_count; i++) {
-      if (a->digits[i] != b->digits[i]) {
-        return 0;
-      }
-    }
-    return 1;
-  }
-}
-
-char equalsToZero(Integer *a) {
-  return (a->digits_count == 1 && a->digits[0] == 0);
-}
-
-char equalsToDigit(Integer *a, int8_t digit) {
-  return (a->digits_count == 1 && a->digits[0] == digit);
 }
 
 Integer *gcd(Integer *a, Integer *b) {
@@ -186,21 +319,6 @@ char is_power(Integer *a) { return 1; }
 
 char has_square_root(Integer *n, Integer *k, Integer *i, Integer *j) {
   return 1;
-}
-
-/* Returns the index of the greatest argument */
-char greater(Integer *a, Integer *b) {
-  if (a->digits_count > b->digits_count) {
-    return 0;
-  } else if (a->digits_count < b->digits_count) {
-    return 1;
-  } else {
-    if (a->digits[0] > b->digits[0]) {
-      return 0;
-    } else {
-      return 1;
-    }
-  }
 }
 
 Integer *exponential(Integer *base, Integer *exponent) {}
