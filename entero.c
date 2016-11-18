@@ -1,6 +1,6 @@
 #include "entero.h"
 
-Integer *new_integer(char *number_string) {
+Integer *new_integer(char *number_string, int8_t sign) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
 
   const char *s;
@@ -13,6 +13,8 @@ Integer *new_integer(char *number_string) {
   for (size_t pos = 0; pos < i->digits_count; pos++) {
     i->digits[pos] = number_string[pos] - 48;
   }
+
+  i->sign = sign;
   return i;
 }
 
@@ -25,6 +27,16 @@ Integer *remove_first_pos(Integer *a) {
   }
   free_integer(a);
   return n;
+}
+
+/* Transform "a" to Integer type */
+Integer *get_integer(int8_t a) {
+  char m = a;
+  if (a < 0) {
+    return new_integer(&m, -1);
+  } else {
+    return new_integer(&m, 1);
+  }
 }
 
 Integer *add(Integer *a, Integer *b) {
@@ -105,7 +117,7 @@ Integer *add(Integer *a, Integer *b) {
 
 Integer *mupltiply(Integer *a, Integer *b) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
-  // TODO Implements multiplication for Integer struct
+
   return i;
 }
 
@@ -115,9 +127,10 @@ Integer *module(Integer *number, Integer *base) {
   return i;
 }
 
-Integer *division_whole(Integer *numerator, Integer *divider, Integer **rest) {
+Integer *division_whole(Integer *numerator, Integer *divider, Integer *rest) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
-  // TODO Implements division for Integer struct
+  rest = (Integer *)malloc(sizeof(Integer));
+
   return i;
 }
 
@@ -169,13 +182,30 @@ void free_integer(Integer *a) {
   free(a);
 }
 
-char is_power(Integer *a) {}
+char is_power(Integer *a) { return 1; }
 
-char has_square_root(Integer *n, Integer *k, Integer *i, Integer *j) {}
+char has_square_root(Integer *n, Integer *k, Integer *i, Integer *j) {
+  return 1;
+}
 
-Integer *exp(Integer *n, Integer *k) {}
+/* Returns the index of the greatest argument */
+char greater(Integer *a, Integer *b) {
+  if (a->digits_count > b->digits_count) {
+    return 0;
+  } else if (a->digits_count < b->digits_count) {
+    return 1;
+  } else {
+    if (a->digits[0] > b->digits[0]) {
+      return 0;
+    } else {
+      return 1;
+    }
+  }
+}
 
-char is_even(Integer *a) {}
+Integer *exponential(Integer *base, Integer *exponent) {}
+
+char is_even(Integer *a) { return 1; }
 
 long random_at_most(long max) {
   unsigned long

@@ -11,21 +11,24 @@ int main(int argc, char **argv) {
       exit(0);
     }
 
-    Integer **a = (Integer **)malloc(sizeof(Integer) * (argc - 1));
+    // Integer **a = (Integer **)malloc(sizeof(Integer) * (argc - 1));
 
-    for (int i = 1; i < argc; i++) {
-      a[i - 1] = new_integer(argv[i]);
-    }
+    // for (int i = 1; i < argc; i++) {
+    //  a[i - 1] = new_integer(argv[i]);
+    //}
 
-    Integer *result = add(a[0], a[1]);
-    print_integer(result);
+    // Integer *result = add(a[0], a[1]);
 
-    free_integer(a[0]);
-    free_integer(a[1]);
+    // free_integer(a[0]);
+    // free_integer(a[1]);
 
-    free_integer(result);
+    // free_integer(result);
 
-    free(a);
+    // free(a);
+
+    int8_t a = 23;
+    Integer *i = get_integer(a);
+    print_integer(i);
   }
 
   /* code */

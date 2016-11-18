@@ -9,12 +9,18 @@ struct integer {
 
   /* Cantidad de digitos del numero */
   size_t digits_count;
+
+  /* Signo del numero, -1 es negativo, +1 positivo */
+  int8_t sign;
 };
 
 typedef struct integer Integer;
 
 /* Crea un integer a partir de una cadena de string */
-Integer *new_integer(char *number_string);
+Integer *new_integer(char *number_string, int8_t sign);
+
+/* Convierte un int8_t en Integer */
+Integer *get_integer(int8_t a);
 
 /* Entrega la suma de ambos enteros */
 Integer *add(Integer *a, Integer *b);
@@ -27,10 +33,10 @@ Integer *module(Integer *number, Integer *base);
 
 /* Entrega la division entera entre numerador y divisor, y deja el resto en rest
  */
-Integer *division_whole(Integer *numerator, Integer *divider, Integer **rest);
+Integer *division_whole(Integer *numerator, Integer *divider, Integer *rest);
 
 /* Entrega el resultado de base^exponent */
-Integer *exp(Integer *base, Integer *exponent);
+Integer *exponential(Integer *base, Integer *exponent);
 
 /* Entrega el resultado de base^exponent mod n */
 Integer *exp_mod(Integer *base, Integer *exponent, Integer *n);
