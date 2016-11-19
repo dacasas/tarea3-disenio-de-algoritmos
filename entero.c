@@ -31,6 +31,24 @@ Integer *new_integer(char *number_string) {
   return i;
 }
 
+void print_integer(Integer *a) {
+  if (a->sign == -1) {
+    printf("%s", "-");
+  }
+  for (size_t i = 0; i < a->digits_count; i++) {
+    printf("%i", a->digits[i]);
+  }
+}
+
+void free_integer(Integer *a) {
+  if (a) {
+    if (a->digits) {
+      free(a->digits);
+    }
+    free(a);
+  }
+}
+
 char equals(Integer *a, Integer *b) {
   if (a->digits_count != b->digits_count) {
     return 0;
@@ -57,14 +75,22 @@ Integer *remove_pos(Integer *a, size_t k) {
   }
 
   Integer *n = (Integer *)malloc(sizeof(Integer));
-  n->digits_count = a->digits_count - k;
-  n->digits = (int8_t *)malloc(sizeof(int8_t) * n->digits_count);
+  if (a->digits_count > k) {
+    n->digits_count = a->digits_count - k;
+    n->digits = (int8_t *)malloc(sizeof(int8_t) * n->digits_count);
 
-  for (size_t m = k; m < a->digits_count; m++) {
-    n->digits[m - k] = a->digits[m];
+    for (size_t m = k; m < a->digits_count; m++) {
+      n->digits[m - k] = a->digits[m];
+    }
+  } else {
+    n->digits_count = 1;
+    n->digits = (int8_t *)malloc(sizeof(int8_t));
+    n->digits[0] = 0;
   }
+  n->sign = a->sign;
 
   free_integer(a);
+
   return n;
 }
 
@@ -76,7 +102,7 @@ Integer *clean_zeroes(Integer *a) {
     size_t count = 0;
     int8_t zero = a->digits[count];
 
-    while (zero == 0 && a->digits_count > 1) {
+    while (zero == 0 && count < a->digits_count - 1) {
       count++;
       zero = a->digits[count];
     }
@@ -130,22 +156,16 @@ char is_greater(Integer *a, Integer *b) {
   }
 }
 
-/* Transform "a" to Integer type */
-Integer *get_integer(int8_t a) {
-  char converted;
-  if (a > 0 && a < 10) {
-    converted = a + 48;
-    return new_integer(&converted);
-  } else {
-  }
+Integer *get_digit(int8_t d) {
+  Integer *digit = (Integer *)malloc(sizeof(Integer));
+  digit->digits_count = 1;
+  digit->digits = (int8_t *)malloc(sizeof(int8_t));
+  digit->digits[0] = d;
+
+  return digit;
 }
 
 Integer *add(Integer *a, Integer *b) {
-  printf("%s", "Adding ");
-  print_integer(a);
-  printf("%s", " + ");
-  print_integer(b);
-  printf("%s", " = ");
 
   Integer *i = (Integer *)malloc(sizeof(Integer));
   if (a->digits_count > b->digits_count) {
@@ -206,28 +226,27 @@ Integer *add(Integer *a, Integer *b) {
     count_result--;
   }
 
-  if (charge == 1) {
-    i->digits[0] = 1;
-  } else {
-    Integer *n = remove_pos(i, 1);
-    i = n;
-  }
-
   // Assume always we will add two possitive numbers
   i->sign = 1;
 
-  print_integer(i);
-  printf("%s\n", "");
+  if (charge == 1) {
+    i->digits[0] = 1;
+    return i;
+  } else {
+    Integer *ret = remove_pos(i, 1);
+    return ret;
+  }
+}
 
-  return i;
+Integer *plus_one(Integer *a) {
+  Integer *b = get_digit(1);
+  Integer *result = add(a, b);
+  free_integer(b);
+  free_integer(a);
+  return result;
 }
 
 Integer *substract(Integer *a, Integer *b) {
-  printf("%s", "Substracting ");
-  print_integer(a);
-  printf("%s", " - ");
-  print_integer(b);
-  printf("%s", " = ");
 
   if (is_greater(b, a)) {
     Integer *result = substract(b, a);
@@ -285,12 +304,9 @@ Integer *substract(Integer *a, Integer *b) {
 
   i->sign = 1;
 
-  Integer *k = clean_zeroes(i);
+  Integer *asd = clean_zeroes(i);
 
-  print_integer(k);
-  printf("%s\n", "");
-
-  return k;
+  return asd;
 }
 
 Integer *mupltiply(Integer *a, Integer *b) {
@@ -323,13 +339,35 @@ Integer *module(Integer *number, Integer *base) {
   return i;
 }
 
-Integer *division_whole(Integer *numerator, Integer *divider, Integer *rest) {
-  Integer *i = (Integer *)malloc(sizeof(Integer));
-  rest = (Integer *)malloc(sizeof(Integer));
-  while (numerator >= divider) {
+Integer *copy_integer(Integer *a) {
+  Integer *b = (Integer *)malloc(sizeof(Integer));
+  b->digits_count = a->digits_count;
+  b->digits = (int8_t *)malloc(sizeof(int8_t) * b->digits_count);
+  for (size_t i = 0; i < b->digits_count; i++) {
+    b->digits[i] = a->digits[i];
+  }
+  b->sign = a->sign;
+  return b;
+}
+
+Integer *divide(Integer *numerator, Integer *divider, Integer **rest) {
+  Integer *result = get_digit(0);
+  Integer *quedando = copy_integer(numerator);
+  Integer *tmp;
+  Integer *tmp2;
+
+  while (is_greater(quedando, divider) || equals(quedando, divider)) {
+    tmp = substract(quedando, divider);
+    free_integer(quedando);
+    quedando = tmp;
+
+    tmp2 = plus_one(result);
+    result = tmp2;
   }
 
-  return i;
+  *rest = quedando;
+
+  return result;
 }
 
 Integer *gcd(Integer *a, Integer *b) {
@@ -344,22 +382,6 @@ Integer *gcd(Integer *a, Integer *b) {
   } else {
     return gcd(a, module(b, a));
   }
-}
-
-void print_integer(Integer *a) {
-  if (a->sign == -1) {
-    printf("%s\n", "-");
-  }
-  for (size_t i = 0; i < a->digits_count; i++) {
-    printf("%i", a->digits[i]);
-  }
-}
-
-void free_integer(Integer *a) {
-  if (a->digits) {
-    free(a->digits);
-  }
-  free(a);
 }
 
 char is_power(Integer *a) { return 1; }

@@ -28,6 +28,9 @@ Integer *add(Integer *a, Integer *b);
 /* Entrega el resultado de a - b */
 Integer *substract(Integer *a, Integer *b);
 
+/* Remueve las k primeras posiciones de a */
+Integer *remove_pos(Integer *a, size_t k);
+
 /* Entrega la multiplicacion de ambos enteros */
 Integer *mupltiply(Integer *a, Integer *b);
 
@@ -36,7 +39,7 @@ Integer *module(Integer *number, Integer *base);
 
 /* Entrega la division entera entre numerador y divisor, y deja el resto en rest
  */
-Integer *division_whole(Integer *numerator, Integer *divider, Integer *rest);
+Integer *divide(Integer *numerator, Integer *divider, Integer **rest);
 
 /* Entrega el resultado de base^exponent */
 Integer *exponential(Integer *base, Integer *exponent);

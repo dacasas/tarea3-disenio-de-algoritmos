@@ -17,13 +17,31 @@ int main(int argc, char **argv) {
       a[i - 1] = new_integer(argv[i]);
     }
 
-    // Integer *result = add(a[0], a[1]);
-    Integer *result1 = substract(a[0], a[1]);
+    Integer *rest;
+    Integer *result = divide(a[0], a[1], &rest);
 
-    free_integer(a[0]);
-    free_integer(a[1]);
-    // free_integer(result);
-    free_integer(result1);
+    printf("%s", "Resultado: ");
+    print_integer(result);
+    printf("%s\n", "");
+    printf("%s", "Resto: ");
+    print_integer(rest);
+    printf("%s\n", "");
+
+    if (a[0]) {
+      free_integer(a[0]);
+    }
+
+    if (a[1]) {
+      free_integer(a[1]);
+    }
+
+    if (rest) {
+      free_integer(rest);
+    }
+
+    if (result) {
+      free_integer(result);
+    }
 
     free(a);
   }
