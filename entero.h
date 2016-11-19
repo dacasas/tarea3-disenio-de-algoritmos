@@ -25,6 +25,9 @@ Integer *get_integer(int8_t a);
 /* Entrega la suma de ambos enteros */
 Integer *add(Integer *a, Integer *b);
 
+/* Entrega el resultado de a - b */
+Integer *substract(Integer *a, Integer *b);
+
 /* Entrega la multiplicacion de ambos enteros */
 Integer *mupltiply(Integer *a, Integer *b);
 

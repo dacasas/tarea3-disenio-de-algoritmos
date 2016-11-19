@@ -131,9 +131,22 @@ char is_greater(Integer *a, Integer *b) {
 }
 
 /* Transform "a" to Integer type */
-Integer *get_integer(int8_t a) {}
+Integer *get_integer(int8_t a) {
+  char converted;
+  if (a > 0 && a < 10) {
+    converted = a + 48;
+    return new_integer(&converted);
+  } else {
+  }
+}
 
 Integer *add(Integer *a, Integer *b) {
+  printf("%s", "Adding ");
+  print_integer(a);
+  printf("%s", " + ");
+  print_integer(b);
+  printf("%s", " = ");
+
   Integer *i = (Integer *)malloc(sizeof(Integer));
   if (a->digits_count > b->digits_count) {
     i->digits_count = a->digits_count + 1;
@@ -176,6 +189,7 @@ Integer *add(Integer *a, Integer *b) {
     }
 
     count_a--;
+    count_result--;
   }
 
   while (count_b >= 0) {
@@ -189,6 +203,7 @@ Integer *add(Integer *a, Integer *b) {
     }
 
     count_b--;
+    count_result--;
   }
 
   if (charge == 1) {
@@ -198,11 +213,9 @@ Integer *add(Integer *a, Integer *b) {
     i = n;
   }
 
-  printf("%s", "Adding ");
-  print_integer(a);
-  printf("%s", " + ");
-  print_integer(b);
-  printf("%s", " = ");
+  // Assume always we will add two possitive numbers
+  i->sign = 1;
+
   print_integer(i);
   printf("%s\n", "");
 
@@ -210,7 +223,13 @@ Integer *add(Integer *a, Integer *b) {
 }
 
 Integer *substract(Integer *a, Integer *b) {
-  if (greater(a, b)) {
+  printf("%s", "Substracting ");
+  print_integer(a);
+  printf("%s", " - ");
+  print_integer(b);
+  printf("%s", " = ");
+
+  if (is_greater(b, a)) {
     Integer *result = substract(b, a);
     result->sign = -1;
     return result;
@@ -233,19 +252,45 @@ Integer *substract(Integer *a, Integer *b) {
   int64_t count_result = i->digits_count - 1;
   int8_t charge = 0;
   while (count_a >= 0 && count_b >= 0) {
-    int8_t result = a->digits[count_a] + b->digits[count_b] + charge;
-    if (result < 10) {
-      i->digits[count_result] = result;
+    if (a->digits[count_a] > b->digits[count_b]) {
+      i->digits[count_result] =
+          a->digits[count_a] - b->digits[count_b] - charge;
       charge = 0;
-    } else {
-      i->digits[count_result] = result - 10;
+
+    } else if (a->digits[count_a] < b->digits[count_b]) {
+      i->digits[count_result] =
+          a->digits[count_a] + 10 - b->digits[count_b] - charge;
       charge = 1;
+
+    } else {
+      i->digits[count_result] = charge * 9;
     }
 
     count_a--;
     count_b--;
     count_result--;
   }
+
+  while (count_a >= 0) {
+    if (charge == 1) {
+      i->digits[count_result] = a->digits[count_a] - 1;
+      charge = 0;
+    } else {
+      i->digits[count_result] = a->digits[count_a];
+    }
+
+    count_a--;
+    count_result--;
+  }
+
+  i->sign = 1;
+
+  Integer *k = clean_zeroes(i);
+
+  print_integer(k);
+  printf("%s\n", "");
+
+  return k;
 }
 
 Integer *mupltiply(Integer *a, Integer *b) {
@@ -282,18 +327,17 @@ Integer *division_whole(Integer *numerator, Integer *divider, Integer *rest) {
   Integer *i = (Integer *)malloc(sizeof(Integer));
   rest = (Integer *)malloc(sizeof(Integer));
   while (numerator >= divider) {
-    numerator = numerator - divider;
   }
 
   return i;
 }
 
 Integer *gcd(Integer *a, Integer *b) {
-  if (equalsToZero(a) && equalsToZero(b)) {
+  if (equalsToDigit(a, 0) && equalsToDigit(b, 0)) {
     return 0;
-  } else if (equalsToZero(a)) {
+  } else if (equalsToDigit(a, 0)) {
     return b;
-  } else if (equalsToZero(b)) {
+  } else if (equalsToDigit(b, 0)) {
     return a;
   } else if (a >= b) {
     return gcd(b, module(a, b));
@@ -303,6 +347,9 @@ Integer *gcd(Integer *a, Integer *b) {
 }
 
 void print_integer(Integer *a) {
+  if (a->sign == -1) {
+    printf("%s\n", "-");
+  }
   for (size_t i = 0; i < a->digits_count; i++) {
     printf("%i", a->digits[i]);
   }
