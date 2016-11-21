@@ -334,8 +334,8 @@ Integer *mupltiply(Integer *a, Integer *b) {
 }
 
 Integer *module(Integer *number, Integer *base) {
-  Integer *i = (Integer *)malloc(sizeof(Integer));
-  // TODO Implements module operation for Integer struct
+  Integer *i;
+  divide(number, base, &i);
   return i;
 }
 

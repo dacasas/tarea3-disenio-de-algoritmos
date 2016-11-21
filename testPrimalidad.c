@@ -17,14 +17,10 @@ int main(int argc, char **argv) {
       a[i - 1] = new_integer(argv[i]);
     }
 
-    Integer *rest;
-    Integer *result = divide(a[0], a[1], &rest);
+    Integer *result = module(a[0], a[1]);
 
     printf("%s", "Resultado: ");
     print_integer(result);
-    printf("%s\n", "");
-    printf("%s", "Resto: ");
-    print_integer(rest);
     printf("%s\n", "");
 
     if (a[0]) {
@@ -33,10 +29,6 @@ int main(int argc, char **argv) {
 
     if (a[1]) {
       free_integer(a[1]);
-    }
-
-    if (rest) {
-      free_integer(rest);
     }
 
     if (result) {
