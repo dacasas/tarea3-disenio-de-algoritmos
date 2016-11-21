@@ -1,6 +1,5 @@
 from integer import Integer
-from random import sample
-import sys
+import random
 
 
 def test_primalidad(n, k):
@@ -12,9 +11,10 @@ def test_primalidad(n, k):
     elif (n.is_even() or n.is_power()):
         return "COMPUESTO"
     else:
-        a = sample(range(1, n.to_int()), k)
+        a = []
+        for i in range(0, k):
+            a.append(random.randint(1, n.to_int() - 1))
         b = []
-        print(a)
         for a_i in a:
             integer_ai = Integer(str(a_i))
             gcd_i = integer_ai.gcd(n)
@@ -31,21 +31,7 @@ def test_primalidad(n, k):
             elif (not b_i.substract(one).module(n).equals(zero)):
                 return "COMPUESTO"
         if (neg == 0):
+            print("-------------break 4-------------------")
             return "COMPUESTO"
         else:
             return "PRIMO"
-
-
-arguments = sys.argv
-if (len(arguments) == 2):
-    # It's a file
-    dir = arguments[1]
-
-elif (len(arguments) == 3):
-    n = Integer(arguments[1])
-    k = int(arguments[2])
-    print(test_primalidad(n, k))
-
-else:
-    print("You must write a file dir to get an output file with the results, or two numbers to get the result directly")
-    exit(0)

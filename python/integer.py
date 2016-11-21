@@ -165,15 +165,18 @@ class Integer:
         actual_index = len(self.digits) - 1
         rest = Integer("123")
         rest.digits = []
+        first = True
 
         while (actual_index >= 0):
             rest.digits = [self.digits[actual_index]] + rest.digits
             rest.clean_zeroes()
 
-            while (b.greater_than(rest) and
-                    not rest.equals(Integer("0")) and actual_index > 0):
-                actual_index -= 1
-                rest.digits = [self.digits[actual_index]] + rest.digits
+            if (first):
+                while (b.greater_than(rest) and
+                        not rest.equals(Integer("0")) and actual_index > 0):
+                    actual_index -= 1
+                    rest.digits = [self.digits[actual_index]] + rest.digits
+                first = False
 
             result, rest = rest.divide_super_naive(b)
             super_result.digits = result.digits + super_result.digits
@@ -328,4 +331,5 @@ class Integer:
 
     def is_even(self):
         last = self.digits[0]
+        # return (last % 2 == 0)
         return (last == 0 or last == 2 or last == 4 or last == 6 or last == 8)
